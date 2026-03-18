@@ -8,21 +8,13 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', sans-serif;
-            color: #fff;
+            color: #1a1a1a;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             overflow-x: hidden;
-            background: #0f0f0f url('floorplan.jpg') center/cover no-repeat;
-        }
-        /* Dark overlay so text stays readable */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.55);
-            z-index: 0;
+            background: linear-gradient(135deg, #ffffff 0%, #a8c8f0 40%, #1a4f9c 100%);
         }
 
         /* Hamburger button */
@@ -40,7 +32,7 @@
             display: block;
             width: 26px;
             height: 2px;
-            background: #fff;
+            background: #1a4f9c;
             transition: all 0.3s ease;
         }
         .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -93,7 +85,7 @@
 
         h1 {
             font-size: 3rem;
-            color: #fff;
+            color: #1a4f9c;
             text-transform: uppercase;
             position: relative;
             z-index: 1;
