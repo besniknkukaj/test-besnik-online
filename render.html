@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Render — Besnik</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #0a0a0a;
+            border-bottom: 1px solid #1f1f1f;
+            padding: 0 48px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: #fff;
+        }
+        header nav a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-left: 32px;
+            transition: color 0.2s;
+        }
+        header nav a:hover, header nav a.active { color: #fff; }
+
+        .hero {
+            text-align: center;
+            padding: 80px 48px 60px;
+            border-bottom: 1px solid #1f1f1f;
+        }
+        .hero .tag {
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 16px;
+        }
+        .hero h1 {
+            font-size: 2.6rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+        .hero h1 span { color: #c8a96e; }
+        .hero p {
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: #666;
+            letter-spacing: 0.04em;
+            line-height: 1.8;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            min-height: calc(100vh - 64px - 220px);
+        }
+
+        /* LEFT — Upload */
+        .panel {
+            padding: 48px;
+            border-right: 1px solid #1f1f1f;
+        }
+        .panel-title {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 28px;
+        }
+
+        .dropzone {
+            border: 1px dashed #333;
+            border-radius: 4px;
+            padding: 60px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            position: relative;
+            background: #0f0f0f;
+        }
+        .dropzone:hover, .dropzone.drag { border-color: #c8a96e; background: #111; }
+        .dropzone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+        .dropzone .icon { font-size: 2.5rem; margin-bottom: 16px; opacity: 0.4; }
+        .dropzone p {
+            font-size: 0.78rem;
+            color: #666;
+            letter-spacing: 0.06em;
+            line-height: 1.7;
+        }
+        .dropzone p strong { color: #c8a96e; }
+
+        .preview-box {
+            margin-top: 20px;
+            display: none;
+            position: relative;
+        }
+        .preview-box img {
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #222;
+        }
+        .preview-box .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .style-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #666;
+            margin: 28px 0 12px;
+        }
+        .styles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .style-btn {
+            padding: 12px;
+            background: #0f0f0f;
+            border: 1px solid #222;
+            color: #888;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 2px;
+        }
+        .style-btn:hover, .style-btn.active {
+            border-color: #c8a96e;
+            color: #c8a96e;
+            background: #111;
+        }
+
+        .generate-btn {
+            width: 100%;
+            margin-top: 24px;
+            padding: 16px;
+            background: #c8a96e;
+            color: #000;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 2px;
+        }
+        .generate-btn:hover { background: #b8995e; }
+        .generate-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+        /* RIGHT — Result */
+        .result-panel {
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+        }
+        .result-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            text-align: center;
+            gap: 16px;
+        }
+        .result-empty .big-icon { font-size: 4rem; }
+        .result-empty p { font-size: 0.78rem; letter-spacing: 0.06em; line-height: 1.8; }
+
+        .result-image { display: none; }
+        .result-image img {
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #222;
+        }
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .result-actions a, .result-actions button {
+            flex: 1;
+            padding: 13px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.2s;
+        }
+        .btn-download { background: #c8a96e; color: #000; border: none; }
+        .btn-download:hover { background: #b8995e; }
+        .btn-new { background: transparent; color: #888; border: 1px solid #333; }
+        .btn-new:hover { border-color: #888; color: #fff; }
+
+        /* Loading */
+        .loading-overlay {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            gap: 20px;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #222;
+            border-top-color: #c8a96e;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-overlay p {
+            font-size: 0.75rem;
+            color: #666;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .loading-overlay .step {
+            font-size: 0.65rem;
+            color: #444;
+            letter-spacing: 0.08em;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="/" class="logo">Besnik</a>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/render.html" class="active">AI Render</a>
+        <a href="#">Projects</a>
+        <a href="#">Contact</a>
+    </nav>
+</header>
+
+<div class="hero">
+    <div class="tag">Powered by AI</div>
+    <h1>Ultra Realistic<br><span>Architectural Renders</span></h1>
+    <p>Upload a photo of any home or building.<br>Our AI transforms it into a professional architectural render in seconds.</p>
+</div>
+
+<div class="workspace">
+
+    <!-- LEFT: Upload + Controls -->
+    <div class="panel">
+        <div class="panel-title">01 — Upload Your Image</div>
+
+        <div class="dropzone" id="dropzone">
+            <input type="file" id="fileInput" accept="image/*">
+            <div class="icon">&#8679;</div>
+            <p><strong>Click or drag</strong> to upload<br>JPG, PNG, WEBP — max 10MB</p>
+        </div>
+
+        <div class="preview-box" id="previewBox">
+            <img id="previewImg" src="" alt="Preview">
+            <button class="remove-btn" id="removeBtn">&#x2715;</button>
+        </div>
+
+        <div class="style-label">02 — Choose Render Style</div>
+        <div class="styles">
+            <button class="style-btn active" data-style="modern">Modern</button>
+            <button class="style-btn" data-style="luxury">Luxury</button>
+            <button class="style-btn" data-style="minimalist">Minimalist</button>
+            <button class="style-btn" data-style="classic">Classic</button>
+        </div>
+
+        <button class="generate-btn" id="generateBtn" disabled>Generate Render</button>
+    </div>
+
+    <!-- RIGHT: Result -->
+    <div class="result-panel">
+        <div class="panel-title">03 — Your Render</div>
+
+        <div class="result-empty" id="resultEmpty">
+            <div class="big-icon">&#9634;</div>
+            <p>Your architectural render<br>will appear here.</p>
+        </div>
+
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="spinner"></div>
+            <p>Generating render...</p>
+            <div class="step" id="loadingStep">Analyzing your image</div>
+        </div>
+
+        <div class="result-image" id="resultImage">
+            <img id="resultImg" src="" alt="Render">
+            <div class="result-actions">
+                <a class="btn-download" id="downloadBtn" href="#" download="render.jpg">Download</a>
+                <button class="btn-new" id="newBtn">New Render</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedFile = null;
+    let selectedStyle = 'modern';
+
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const previewBox = document.getElementById('previewBox');
+    const previewImg = document.getElementById('previewImg');
+    const removeBtn = document.getElementById('removeBtn');
+    const generateBtn = document.getElementById('generateBtn');
+    const resultEmpty = document.getElementById('resultEmpty');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const resultImage = document.getElementById('resultImage');
+    const resultImg = document.getElementById('resultImg');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const loadingStep = document.getElementById('loadingStep');
+
+    // Style buttons
+    document.querySelectorAll('.style-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedStyle = btn.dataset.style;
+        });
+    });
+
+    // File selection
+    fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+    dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropzone.classList.remove('drag');
+        handleFile(e.dataTransfer.files[0]);
+    });
+
+    function handleFile(file) {
+        if (!file || !file.type.startsWith('image/')) return;
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = e => {
+            previewImg.src = e.target.result;
+            previewBox.style.display = 'block';
+            dropzone.style.display = 'none';
+            generateBtn.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    removeBtn.addEventListener('click', () => {
+        selectedFile = null;
+        previewBox.style.display = 'none';
+        dropzone.style.display = 'block';
+        fileInput.value = '';
+        generateBtn.disabled = true;
+    });
+
+    document.getElementById('newBtn').addEventListener('click', () => {
+        resultImage.style.display = 'none';
+        resultEmpty.style.display = 'flex';
+        removeBtn.click();
+    });
+
+    // Generate
+    generateBtn.addEventListener('click', async () => {
+        if (!selectedFile) return;
+
+        generateBtn.disabled = true;
+        resultEmpty.style.display = 'none';
+        resultImage.style.display = 'none';
+        loadingOverlay.style.display = 'flex';
+
+        const steps = [
+            'Analyzing your image...',
+            'Applying architectural style...',
+            'Rendering details...',
+            'Enhancing realism...',
+            'Finalizing render...'
+        ];
+        let stepIdx = 0;
+        const stepInterval = setInterval(() => {
+            loadingStep.textContent = steps[Math.min(stepIdx++, steps.length - 1)];
+        }, 8000);
+
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+        formData.append('style', selectedStyle);
+
+        try {
+            const res = await fetch('/api/render', { method: 'POST', body: formData });
+            const data = await res.json();
+            clearInterval(stepInterval);
+
+            if (data.url) {
+                resultImg.src = data.url;
+                downloadBtn.href = data.url;
+                loadingOverlay.style.display = 'none';
+                resultImage.style.display = 'block';
+            } else {
+                throw new Error(data.error || 'Render failed');
+            }
+        } catch (err) {
+            clearInterval(stepInterval);
+            loadingOverlay.style.display = 'none';
+            resultEmpty.style.display = 'flex';
+            resultEmpty.querySelector('p').textContent = 'Error: ' + err.message;
+            generateBtn.disabled = false;
+        }
+    });
+</script>
+
+</body>
+</html>
