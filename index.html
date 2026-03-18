@@ -3,489 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BESNIK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Besnik</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: 'Montserrat', sans-serif;
-            background: #fff;
-            color: #000;
-            overflow-x: hidden;
-        }
-
-        /* ── TOP BAR ── */
-        .topbar {
-            width: 100%;
-            background: #000;
-            color: #fff;
-            text-align: center;
-            font-size: 0.72rem;
-            letter-spacing: 0.12em;
-            padding: 9px 0;
-            text-transform: uppercase;
-        }
-
-        /* ── HEADER ── */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 900;
-            background: #fff;
-            border-bottom: 1px solid #e8e8e8;
+            font-family: 'Segoe UI', sans-serif;
+            color: #1a1a1a;
             display: flex;
+            justify-content: center;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 48px;
-            height: 64px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #ffffff 0%, #a8c8f0 40%, #1a4f9c 100%);
         }
 
-        /* Hamburger */
+        /* Hamburger button */
         .hamburger {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            cursor: pointer;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
             gap: 5px;
-            cursor: pointer;
-            z-index: 1000;
         }
         .hamburger span {
             display: block;
-            width: 24px;
-            height: 1.5px;
-            background: #000;
+            width: 26px;
+            height: 2px;
+            background: #1a4f9c;
             transition: all 0.3s ease;
         }
-        .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
-        .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-        /* Logo */
-        .logo {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.4rem;
-            font-weight: 700;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            text-decoration: none;
-            color: #000;
-        }
-
-        /* Header right icons */
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .header-right a {
-            color: #000;
-            text-decoration: none;
-            font-size: 0.75rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-        .header-right a:hover { opacity: 0.6; }
-
-        /* ── DRAWER ── */
+        /* Overlay */
         .overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 800;
+            background: rgba(0,0,0,0.5);
+            z-index: 500;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s ease;
         }
         .overlay.open { opacity: 1; pointer-events: all; }
 
+        /* Drawer */
         .drawer {
             position: fixed;
             top: 0;
             left: 0;
-            width: 300px;
+            width: 260px;
             height: 100%;
-            background: #fff;
-            z-index: 850;
+            background: rgba(10, 10, 20, 0.95);
+            z-index: 600;
             transform: translateX(-100%);
             transition: transform 0.35s ease;
-            padding: 80px 40px 40px;
+            padding: 80px 32px 32px;
             display: flex;
             flex-direction: column;
-            gap: 0;
-            border-right: 1px solid #f0f0f0;
+            gap: 8px;
+            border-right: 1px solid #222;
         }
         .drawer.open { transform: translateX(0); }
         .drawer a {
-            color: #000;
+            color: #ccc;
             text-decoration: none;
-            font-size: 0.82rem;
-            text-transform: uppercase;
-            letter-spacing: 0.14em;
-            font-weight: 500;
-            padding: 16px 0;
-            border-bottom: 1px solid #f0f0f0;
-            transition: opacity 0.2s;
-        }
-        .drawer a:hover { opacity: 0.5; }
-
-        /* ── HERO ── */
-        .hero {
-            position: relative;
-            width: 100%;
-            height: calc(100vh - 90px);
-            overflow: hidden;
-        }
-        .hero-slides { display: flex; height: 100%; transition: transform 0.8s ease; }
-        .hero-slide {
-            min-width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-        .hero-slide-1 { background-color: #f5f5f5; background-image: url('floorplan.jpg'); }
-        .hero-slide-2 { background: #1a1a1a; }
-        .hero-slide-3 { background: #e8e8e8; }
-
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.32);
-        }
-        .hero-content {
-            position: absolute;
-            bottom: 80px;
-            left: 80px;
-            color: #fff;
-        }
-        .hero-content .label {
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-            opacity: 0.85;
-        }
-        .hero-content h1 {
-            font-size: 3.2rem;
-            font-weight: 300;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            line-height: 1.15;
-            margin-bottom: 10px;
-        }
-        .hero-content p {
-            font-size: 0.85rem;
-            letter-spacing: 0.06em;
-            opacity: 0.8;
-            margin-bottom: 32px;
-            font-weight: 300;
-        }
-        .btn {
-            display: inline-block;
-            padding: 13px 36px;
-            font-size: 0.72rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.25s;
-        }
-        .btn-white { background: #fff; color: #000; }
-        .btn-white:hover { background: #000; color: #fff; }
-        .btn-black { background: #000; color: #fff; }
-        .btn-black:hover { background: #fff; color: #000; border: 1px solid #000; }
-
-        /* Slide dots */
-        .hero-dots {
-            position: absolute;
-            bottom: 28px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-        }
-        .dot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.4);
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .dot.active { background: #fff; }
-
-        /* Slide arrows */
-        .arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.4);
-            color: #fff;
-            width: 44px; height: 44px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
             font-size: 1.1rem;
-            transition: background 0.2s;
-            z-index: 10;
-        }
-        .arrow:hover { background: rgba(255,255,255,0.35); }
-        .arrow-left { left: 24px; }
-        .arrow-right { right: 24px; }
-
-        /* ── SECTIONS ── */
-        .section { padding: 80px 48px; }
-        .section-title {
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
             text-transform: uppercase;
-            text-align: center;
-            margin-bottom: 48px;
-            color: #888;
-        }
-
-        /* Cards */
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-        }
-        .card {
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        .card-img {
-            width: 100%;
-            aspect-ratio: 3/4;
-            background: #f0f0f0;
-            display: flex;
-            align-items: flex-end;
-            overflow: hidden;
-        }
-        .card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .card:hover .card-img img { transform: scale(1.04); }
-        .card-body { padding: 14px 4px; }
-        .card-name {
-            font-size: 0.78rem;
             letter-spacing: 0.08em;
-            text-transform: uppercase;
             font-weight: 500;
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+            transition: color 0.2s;
         }
-        .card-price {
-            font-size: 0.78rem;
-            color: #666;
-            margin-top: 4px;
-        }
+        .drawer a:last-child { border-bottom: none; }
+        .drawer a:hover { color: #fff; }
 
-        /* Banner */
-        .banner {
-            background: #000;
-            color: #fff;
-            padding: 80px 48px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .banner h2 {
-            font-size: 2.2rem;
-            font-weight: 300;
-            letter-spacing: 0.1em;
+        h1 {
+            font-size: 3rem;
+            color: #1a4f9c;
             text-transform: uppercase;
-            line-height: 1.2;
-        }
-        .banner p {
-            font-size: 0.82rem;
-            letter-spacing: 0.04em;
-            opacity: 0.7;
-            max-width: 380px;
-            line-height: 1.8;
-        }
-
-        /* Footer */
-        footer {
-            border-top: 1px solid #e8e8e8;
-            padding: 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        footer .footer-logo {
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-        }
-        footer .footer-links {
-            display: flex;
-            gap: 32px;
-        }
-        footer .footer-links a {
-            font-size: 0.72rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: #000;
-            text-decoration: none;
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
-        footer .footer-links a:hover { opacity: 1; }
-        footer .footer-copy {
-            font-size: 0.68rem;
-            color: #aaa;
-            letter-spacing: 0.06em;
+            position: relative;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
 
-    <div class="topbar">Free shipping on orders over €150 &nbsp;·&nbsp; New collection available now</div>
-
-    <header>
-        <div class="hamburger" id="hamburger">
-            <span></span><span></span><span></span>
-        </div>
-        <a href="#" class="logo">Besnik</a>
-        <div class="header-right">
-            <a href="#">Search</a>
-            <a href="#">Login</a>
-            <a href="#">Cart (0)</a>
-        </div>
-    </header>
+    <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
 
     <div class="overlay" id="overlay"></div>
+
     <nav class="drawer" id="drawer">
         <a href="#">Home</a>
-        <a href="#">Projects</a>
         <a href="#">About</a>
+        <a href="#">Projects</a>
         <a href="#">Contact</a>
     </nav>
 
-    <!-- HERO -->
-    <section class="hero">
-        <div class="hero-slides" id="slides">
-            <div class="hero-slide hero-slide-1">
-                <div class="hero-overlay"></div>
-                <div class="hero-content">
-                    <div class="label">New Collection — 2026</div>
-                    <h1>Modern<br>Architecture</h1>
-                    <p>Precision. Vision. Excellence.</p>
-                    <a href="#" class="btn btn-white">Explore Now</a>
-                </div>
-            </div>
-            <div class="hero-slide hero-slide-2">
-                <div class="hero-overlay" style="background:rgba(0,0,0,0.5)"></div>
-                <div class="hero-content">
-                    <div class="label">Featured Projects</div>
-                    <h1>Design<br>Beyond Limits</h1>
-                    <p>Where every detail tells a story.</p>
-                    <a href="#" class="btn btn-white">View Projects</a>
-                </div>
-            </div>
-            <div class="hero-slide hero-slide-3">
-                <div class="hero-overlay" style="background:rgba(0,0,0,0.25)"></div>
-                <div class="hero-content">
-                    <div class="label">About Us</div>
-                    <h1>Built With<br>Purpose</h1>
-                    <p>Crafting spaces that inspire.</p>
-                    <a href="#" class="btn btn-black">Learn More</a>
-                </div>
-            </div>
-        </div>
-        <div class="arrow arrow-left" id="prev">&#8592;</div>
-        <div class="arrow arrow-right" id="next">&#8594;</div>
-        <div class="hero-dots">
-            <div class="dot active" data-i="0"></div>
-            <div class="dot" data-i="1"></div>
-            <div class="dot" data-i="2"></div>
-        </div>
-    </section>
-
-    <!-- CARDS -->
-    <section class="section">
-        <div class="section-title">Our Work</div>
-        <div class="cards">
-            <div class="card">
-                <div class="card-img" style="background:#e0e0e0;">
-                    <img src="floorplan.jpg" alt="Project 1">
-                </div>
-                <div class="card-body">
-                    <div class="card-name">Residential — Villa A</div>
-                    <div class="card-price">Floor Plan · Interior Design</div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-img" style="background:#d0d0d0;">
-                    <img src="floorplan.jpg" alt="Project 2" style="filter:grayscale(30%)">
-                </div>
-                <div class="card-body">
-                    <div class="card-name">Commercial — Office HQ</div>
-                    <div class="card-price">Architecture · Planning</div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-img" style="background:#c8c8c8;">
-                    <img src="floorplan.jpg" alt="Project 3" style="filter:grayscale(60%)">
-                </div>
-                <div class="card-body">
-                    <div class="card-name">Urban — Mixed Use</div>
-                    <div class="card-price">Concept · Development</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- BANNER -->
-    <div class="banner">
-        <h2>Timeless<br>Design</h2>
-        <p>Every project is an opportunity to create something meaningful — functional spaces shaped by vision, precision, and a deep respect for detail.</p>
-        <a href="#" class="btn btn-white">Get in Touch</a>
-    </div>
-
-    <!-- FOOTER -->
-    <footer>
-        <div class="footer-logo">Besnik</div>
-        <div class="footer-links">
-            <a href="#">Home</a>
-            <a href="#">Projects</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
-        </div>
-        <div class="footer-copy">&copy; 2026 Besnik. All rights reserved.</div>
-    </footer>
+    <h1>Besnik</h1>
 
     <script>
-        // Drawer
         const hamburger = document.getElementById('hamburger');
         const drawer = document.getElementById('drawer');
         const overlay = document.getElementById('overlay');
-        function toggleDrawer() {
+
+        function toggle() {
             hamburger.classList.toggle('open');
             drawer.classList.toggle('open');
             overlay.classList.toggle('open');
         }
-        hamburger.addEventListener('click', toggleDrawer);
-        overlay.addEventListener('click', toggleDrawer);
 
-        // Slideshow
-        let current = 0;
-        const slides = document.getElementById('slides');
-        const dots = document.querySelectorAll('.dot');
-        const total = 3;
-
-        function goTo(i) {
-            current = (i + total) % total;
-            slides.style.transform = `translateX(-${current * 100}%)`;
-            dots.forEach(d => d.classList.remove('active'));
-            dots[current].classList.add('active');
-        }
-
-        document.getElementById('prev').addEventListener('click', () => goTo(current - 1));
-        document.getElementById('next').addEventListener('click', () => goTo(current + 1));
-        dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.i)));
-
-        setInterval(() => goTo(current + 1), 5000);
+        hamburger.addEventListener('click', toggle);
+        overlay.addEventListener('click', toggle);
     </script>
 </body>
 </html>
